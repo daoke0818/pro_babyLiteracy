@@ -7,73 +7,152 @@
     <meta name="renderer" content="webkit">
     <title>阿洛识字</title>
     <meta name="keywords" content="关中刀客在青岛,个人博客,前端技术博客">
-    <meta name="description" content="">
-    <link rel="shortcut icon" href="../static/img/favicon.ico">
-    <link rel="stylesheet" href="../static/assets/css/iconfont.css">
-    <link rel="stylesheet" href="../static/css/common.css">
-    <link rel="stylesheet" href="../static/css/index.css">
-    <script src="../static/assets/js/jquery-3.3.1.min.js"></script>
+    <meta name="description" content="一款宝宝识字的web应用">
+    <link rel="stylesheet" href="static/assets/css/bootstrap-4.3.1.min.css">
+    <script src="static/assets/js/jquery-3.3.1.min.js"></script>
+    <style>
+        body {
+            background-color: skyblue;
+        }
+
+        body > .container > section {
+            margin-bottom: 2em;
+        }
+
+        .jumbotron {
+            background-color: pink;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .jumbotron h2 {
+            font-size: 1.75rem;
+            color: #fff;
+        }
+
+        .box-wrap > div {
+            width: 33%;
+            height: 6rem;
+            line-height: 6rem;
+            font-size: 4rem;
+            font-weight: bold;
+            border: .125rem solid gray;
+            background: lightgray;
+            cursor: pointer;
+        }
+
+        .box-wrap > div.correct {
+            color: #fff;
+            background: limegreen;
+        }
+
+        .box-wrap > div.error {
+            background: indianred;
+        }
+
+        #answer {
+            color: rgba(0, 0, 0, .1);
+        }
+        #next{
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body id="investmentRisk">
 <div id="container">
-    <script src="../static/js/common.js"></script>
-    <header></header>
-    <nav>
-        <a href="map2d.html">进入地图</a>
-        <a href="globe3d.html">进入3d地球</a>
-    </nav>
-    <main>
-        <!--样式里的l,m,r,t,b分别代表左，中，右，上，下-->
-        <div class="l">
-            <div class="l-t">
-                <div class="chart-wrap">
-                    <h3>tiobe计算机语言流行趋势</h3>
-                    <div class="chart" id="ec01_line_tiobe"></div>
+    <div class="container">
+        <div class="jumbotron">
+            <h2 class="text-center">阿洛加油<br>
+                <small>ヾ(◍°∇°◍)ﾉﾞ</small>
+            </h2>
+            <div class="input-group justify-content-end">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                           value="option1" checked>
+                    <label class="form-check-label" for="inlineRadio1">数字</label>
                 </div>
-            </div>
-            <div class="l-b">
-                <div class="chart-wrap">
-                    <h3>面积图</h3>
-                    <div class="chart" id="ec02_area_accessSource"></div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                           value="option2" disabled>
+                    <label class="form-check-label" for="inlineRadio2">字母</label>
                 </div>
-            </div>
-        </div>
-        <div class="m">
-            <div class="m-t">
-                <div class="chart-wrap">
-                    <h3>一周时间分布</h3>
-                    <div class="chart" id="ec03_barV_timeDistribute"></div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                           value="option3" disabled>
+                    <label class="form-check-label" for="inlineRadio3">其他符号</label>
                 </div>
-            </div>
-            <div class="m-b">
-                <div class="chart-wrap">
-                    <h3>当电脑坏了的时候</h3>
-                    <div class="chart" id="ec04_pie_computerBroken"></div>
+                <div class="ml-3">
+                    <output id="answer"></output>
                 </div>
             </div>
         </div>
-
-        <div class="r">
-            <div class="r-t">
-                <div class="chart-wrap">
-                    <h3>一周时间分布</h3>
-                    <div class="chart" id="ec05_lineBar_timeDistribute"></div>
-                </div>
+        <section class="text-center mb-2">
+            <p class="mb-2">请点击答案方格：</p>
+            <div class="box-wrap d-flex flex-wrap">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
-            <div class="r-b">
-                <div class="chart-wrap">
-                    <h3>当在网上找某首歌的时候</h3>
-                    <div class="chart" id="ec06_pie_findSong"></div>
-                </div>
-            </div>
-        </div>
-    </main>
+        </section>
+        <p>第
+            <output id="counter" class="font-weight-bold"></output>
+            道题
+        </p>
+        <p class="text-center">
+            <button class="btn btn-primary" id="next">下一题</button>
+        </p>
+    </div>
 </div>
-<aside></aside>
-<script src="../static/assets/js/echarts-4.2.0.min.js"></script>
-<script src="../static/js/chartsCom.js"></script>
-<script src="../static/js/index.js"></script>
+<script>
+    $(function () {
+        let result = '';
+        let $blocks = $('.box-wrap>div');
+        let counter = 1;
+
+        function Shuffle() {
+            $blocks.removeClass('correct error')
+            result = Math.floor(Math.random() * 10) + '';
+            let resultIndex = Math.floor(Math.random() * 10);
+            let rdmStr = '';
+            while (true) {
+                rdmStr = Math.random().toString(36).toUpperCase().substr(-8).split('');
+                if (!rdmStr.includes(result)) {
+                    break;
+                }
+            }
+            rdmStr.splice(resultIndex, 0, result + '');
+            // console.log(result,resultIndex,rdmStr);
+            $blocks.each(function (index, item, self) {
+                $(item).text(rdmStr[index])
+            });
+            $('#answer').text(result);
+            $('#counter').text(counter);
+        }
+
+        Shuffle();
+        $blocks.click(function () {
+            let text = $(this).text();
+            if (text === result) {
+                $(this).addClass('correct')
+            } else {
+                $(this).addClass('error')
+            }
+
+        });
+        $('#next').click(function () {
+            counter++;
+            Shuffle();
+        })
+    })
+</script>
 </body>
 </html>
 
