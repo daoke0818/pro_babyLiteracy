@@ -148,13 +148,16 @@
                 $(this).addClass('correct');
                 $sound_correct.get(0).play()
             } else {
-                $(this).addClass('error')
+                // $(this).addClass('error')
             }
 
         });
         $('#next').click(function () {
             $sound_next.get(0).play()
-            counter++;
+            if(++counter>10){
+                alert('宝宝，你已经学了10道题了，该休息一下眼睛了！');
+                close();
+            }
             Shuffle();
         })
     })
