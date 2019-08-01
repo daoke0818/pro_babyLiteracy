@@ -111,11 +111,15 @@
         </p>
     </div>
 </div>
+<audio id="sound_correct" hidden src="static/sound/tada.wav"></audio>
+<audio id="sound_next" hidden src="static/sound/next.wav"></audio>
 <script>
     $(function () {
         let result = '';
         let $blocks = $('.box-wrap>div');
         let counter = 1;
+        let $sound_correct = $('#sound_correct');
+        let $sound_next = $('#sound_next');
 
         function Shuffle() {
             $blocks.removeClass('correct error')
@@ -141,13 +145,15 @@
         $blocks.click(function () {
             let text = $(this).text();
             if (text === result) {
-                $(this).addClass('correct')
+                $(this).addClass('correct');
+                $sound_correct.get(0).play()
             } else {
                 $(this).addClass('error')
             }
 
         });
         $('#next').click(function () {
+            $sound_next.get(0).play()
             counter++;
             Shuffle();
         })
@@ -156,7 +162,7 @@
 </body>
 </html>
 
-<!--/usr/local/apache-tomcat-9.0.16/webapps/ROOT/projects/bigScreenCharts-->
+<!--/usr/local/apache-tomcat-9.0.16/webapps/ROOT/projects/babyLiteracy-->
 
 
 
