@@ -121,8 +121,8 @@
         let $sound_correct = $('#sound_correct');
         let $sound_next = $('#sound_next');
 
-        function Shuffle() {
-            $blocks.removeClass('correct error')
+        function shuffle() {
+            $blocks.removeClass('correct error');
             result = Math.floor(Math.random() * 10) + '';
             let resultIndex = Math.floor(Math.random() * 10);
             let rdmStr = '';
@@ -141,7 +141,7 @@
             $('#counter').text(counter);
         }
 
-        Shuffle();
+        shuffle();
         $blocks.click(function () {
             let text = $(this).text();
             if (text === result) {
@@ -153,12 +153,15 @@
 
         });
         $('#next').click(function () {
-            $sound_next.get(0).play()
+            $sound_next.get(0).play();
             if(++counter>10){
                 alert('宝宝，你已经学了10道题了，该休息一下眼睛了！');
-                close();
+                $('#next').text('休息了');
+                close(); // 移动端不好用，PC端有时不好用
+                $('body').css('pointer-events','none');
+                return;
             }
-            Shuffle();
+            shuffle();
         })
     })
 </script>
