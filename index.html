@@ -106,9 +106,11 @@
             <output id="counter" class="font-weight-bold"></output>
             道题
         </p>
+<!--
         <p class="text-center">
             <button class="btn btn-primary" id="next">下一题</button>
         </p>
+-->
     </div>
 </div>
 <audio id="sound_correct" hidden src="static/sound/tada.wav"></audio>
@@ -145,14 +147,16 @@
         $blocks.click(function () {
             let text = $(this).text();
             if (text === result) {
-                $(this).addClass('correct');
-                $sound_correct.get(0).play()
+                $(this).addClass('correct').css('pointer-events','none');
+                $sound_correct.get(0).play();
+                setTimeout(next,1000);
             } else {
                 // $(this).addClass('error')
             }
 
         });
-        $('#next').click(function () {
+        let next = () =>{
+            $blocks.css('pointer-events','initial');
             $sound_next.get(0).play();
             if(++counter>10){
                 alert('宝宝，你已经学了10道题了，该休息一下眼睛了！');
@@ -162,7 +166,10 @@
                 return;
             }
             shuffle();
-        })
+        }
+        /*$('#next').click(function () {
+
+        })*/
     })
 </script>
 </body>
