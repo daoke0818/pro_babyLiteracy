@@ -50,7 +50,11 @@
         .box-wrap > div.error {
             background: indianred;
         }
-
+        .box-wrap~img{
+            top: 57%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
         #answer {
             color: rgba(0, 0, 0, .1);
         }
@@ -89,7 +93,7 @@
                 </div>
             </div>
         </div>
-        <section class="text-center mb-2">
+        <section class="text-center mb-2 position-relative">
             <p class="mb-2">请点击答案方格：</p>
             <div class="box-wrap d-flex flex-wrap">
                 <div></div>
@@ -102,6 +106,7 @@
                 <div></div>
                 <div></div>
             </div>
+            <img src="static/img/damuzhi.jpg" id="good" class=" d-none position-absolute w-25" alt="">
         </section>
         <p>第
             <output id="counter" class="font-weight-bold"></output>
@@ -123,6 +128,7 @@
         let counter = 1;
         let $sound_correct = $('#sound_correct');
         let $sound_next = $('#sound_next');
+        let $good = $('#good');
         let resultIndex = 0;
         let timer = 0;
         const limitNum = 20;
