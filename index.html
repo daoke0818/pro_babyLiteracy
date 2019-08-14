@@ -51,6 +51,7 @@
             background: indianred;
         }
         .box-wrap~img{
+            display: none;
             top: 57%;
             left: 50%;
             transform: translate(-50%,-50%);
@@ -106,7 +107,7 @@
                 <div></div>
                 <div></div>
             </div>
-            <img src="static/img/damuzhi.jpg" id="good" class=" d-none position-absolute w-25" alt="">
+            <img src="static/img/damuzhi.jpg" id="good" class="position-absolute w-50" alt="">
         </section>
         <p>第
             <output id="counter" class="font-weight-bold"></output>
@@ -134,6 +135,7 @@
         const limitNum = 20;
 
         function shuffle() {
+            $good.hide();
             timer = null;
             $blocks.removeClass('correct error');
             result = Math.floor(Math.random() * 10) + '';
@@ -154,13 +156,20 @@
             $('#counter').text(counter);
         }
 
+        function checkRight(){
+            setTimeout(function () {
+                $good.show(100)
+            },400)
+
+            $blocks.eq(resultIndex).addClass('correct');
+            $sound_correct.get(0).play();
+            timer = setTimeout(next, 1500);
+        }
         shuffle();
         $blocks.click(function () {
             let text = $(this).text();
-            if (text === result) {
-                $(this).addClass('correct').css('pointer-events', 'none');
-                $sound_correct.get(0).play();
-                setTimeout(next, 1000);
+            if (!timer && text === result) {
+                checkRight()
             } else {
                 // $(this).addClass('error')
             }
@@ -168,9 +177,7 @@
         });
         $('body').keyup(function (e) {
             if(!timer && e.key === result){
-                $blocks.eq(resultIndex).addClass('correct').css('pointer-events', 'none');
-                $sound_correct.get(0).play();
-                timer = setTimeout(next, 1000);
+                checkRight()
             }
         });
 
