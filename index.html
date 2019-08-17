@@ -146,7 +146,7 @@
             type = $(this).val();
             shuffle();
             // alert(type);
-        }).change();
+        }).eq(1).change();
 
         function shuffle() {
             const thumbAttr = 'static/img/' + thumbs[Math.floor(Math.random() * thumbs.length)];
@@ -194,7 +194,6 @@
             timer = setTimeout(next, 1500);
         }
 
-        // shuffle();
         $blocks.click(function () {
             let text = $(this).text();
             if (!timer && text === result) {
