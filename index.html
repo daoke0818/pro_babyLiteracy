@@ -50,12 +50,14 @@
         .box-wrap > div.error {
             background: indianred;
         }
-        .box-wrap~img{
+
+        .box-wrap ~ img {
             display: none;
             top: 57%;
             left: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
         }
+
         #answer {
             color: rgba(0, 0, 0, .1);
         }
@@ -76,17 +78,17 @@
             <div class="input-group justify-content-end">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                           value="option1" checked>
+                           value="number">
                     <label class="form-check-label" for="inlineRadio1">数字</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                           value="option2" disabled>
-                    <label class="form-check-label" for="inlineRadio2">字母</label>
+                           value="letter" checked>
+                    <label class="form-check-label" for="inlineRadio2">大写字母</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
-                           value="option3" disabled>
+                           value="other" disabled>
                     <label class="form-check-label" for="inlineRadio3">其他符号</label>
                 </div>
                 <div class="ml-3">
@@ -107,12 +109,14 @@
                 <div></div>
                 <div></div>
             </div>
-            <img src="static/img/thumb1.jpg" id="good" class="position-absolute w-50" data-src="thumb1.jpg,thumb2,thumb3_face" alt="thumb">
+            <img src="static/img/thumb1.jpg" id="good" class="position-absolute w-50"
+                 data-src="thumb1.jpg,thumb2,thumb3_face" alt="thumb">
         </section>
         <p>第
             <output id="counter" class="font-weight-bold"></output>
             道题
         </p>
+        <p id="tip"></p>
         <!--
                 <p class="text-center">
                     <button class="btn btn-primary" id="next">下一题</button>
@@ -124,24 +128,44 @@
 <audio id="sound_next" hidden src="static/sound/next.wav"></audio>
 <script>
     $(function () {
+        const $blocks = $('.box-wrap>div');
+        const $sound_correct = $('#sound_correct');
+        const $sound_next = $('#sound_next');
+        const $good = $('#good');
+        const $tip = $('#tip');
+        const limitNum = 20;
+        const thumbs = ['thumb1.jpg', 'thumb2.jpg', 'thumb3_face.jpg'];
+        const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
         let result = '';
-        let $blocks = $('.box-wrap>div');
         let counter = 1;
-        let $sound_correct = $('#sound_correct');
-        let $sound_next = $('#sound_next');
-        let $good = $('#good');
         let resultIndex = 0;
         let timer = 0;
-        const limitNum = 20;
-        const thumbs = ['thumb1.jpg','thumb2.jpg','thumb3_face.jpg'];
+        let type = 'number';
+
+        $('[name=inlineRadioOptions]').change(function () {
+            type = $(this).val();
+            shuffle();
+            // alert(type);
+        }).change();
 
         function shuffle() {
-            const thumbAttr = 'static/img/'+thumbs[Math.floor(Math.random()*thumbs.length)];
-            // alert(thumbAttr)
-            $good.hide().attr('src',thumbAttr);
+            const thumbAttr = 'static/img/' + thumbs[Math.floor(Math.random() * thumbs.length)];
+            $good.hide().attr('src', thumbAttr);
             timer = null;
             $blocks.removeClass('correct error');
-            result = Math.floor(Math.random() * 10) + '';
+            switch (type) {
+                case "number":
+                    result = Math.floor(Math.random() * 10) + '';
+                    $tip.hide();
+                    break;
+                case 'letter': //大写字母的ASC2码是65~90
+                    while (true) {
+                        result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+                        if (passLetters.includes(result)) { break;}
+                    }
+                    $tip.html('目前已经学过的字母有：<br>'+passLetters.join(' ')+'<br>共'+passLetters.length+'个').show();
+
+            }
             resultIndex = Math.floor(Math.random() * 10);
             let rdmStr = '';
             while (true) {
@@ -159,16 +183,18 @@
             $('#counter').text(counter);
         }
 
-        function checkRight(){
+        function checkRight() {
             setTimeout(function () {
                 $good.show(100)
-            },400)
+            }, 400);
 
             $blocks.eq(resultIndex).addClass('correct');
+            $sound_correct.get(0).pause();
             $sound_correct.get(0).play();
             timer = setTimeout(next, 1500);
         }
-        shuffle();
+
+        // shuffle();
         $blocks.click(function () {
             let text = $(this).text();
             if (!timer && text === result) {
@@ -179,16 +205,17 @@
 
         });
         $('body').keyup(function (e) {
-            if(!timer && e.key === result){
+            if (!timer && e.key === result) {
                 checkRight()
             }
         });
 
         let next = () => {
             $blocks.css('pointer-events', 'initial');
+            $sound_next.get(0).pause();
             $sound_next.get(0).play();
             if (++counter > limitNum) {
-                alert('宝宝，你已经学了'+limitNum+'道题了，该休息一下眼睛了！');
+                alert('宝宝，你已经学了' + limitNum + '道题了，该休息一下眼睛了！');
                 $('#next').text('休息了');
                 close(); // 移动端不好用，PC端有时不好用
                 $('body').css('pointer-events', 'none');
