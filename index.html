@@ -83,8 +83,13 @@
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                           value="letter" checked>
+                           value="letter">
                     <label class="form-check-label" for="inlineRadio2">大写字母</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4"
+                           value="letterOrNum" checked>
+                    <label class="form-check-label" for="inlineRadio4">大写字母或数字</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
@@ -142,29 +147,31 @@
         let timer = 0;
         let type = 'number';
 
-        $('[name=inlineRadioOptions]').change(function () {
-            type = $(this).val();
-            shuffle();
-            // alert(type);
-        }).eq(1).change();
-
-        function shuffle() {
+        const rdm_num = () => Math.floor(Math.random() * 10) + '';
+        const rdm_letter = () => {
+            let result;
+            while (true) {
+                result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+                if (passLetters.includes(result)) { break;}
+            }
+            return result;
+        };
+        const shuffle = () => {
             const thumbAttr = 'static/img/' + thumbs[Math.floor(Math.random() * thumbs.length)];
             $good.hide().attr('src', thumbAttr);
             timer = null;
             $blocks.removeClass('correct error');
             switch (type) {
                 case "number":
-                    result = Math.floor(Math.random() * 10) + '';
+                    result = rdm_num();
                     $tip.hide();
                     break;
                 case 'letter': //大写字母的ASC2码是65~90
-                    while (true) {
-                        result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-                        if (passLetters.includes(result)) { break;}
-                    }
-                    $tip.html('目前已经学过的字母有：<br>'+passLetters.join(' ')+'<br>共'+passLetters.length+'个').show();
-
+                    result = rdm_letter();
+                    $tip.html('目前已经学过的字母有：<br>' + passLetters.join(' ') + '<br>共' + passLetters.length + '个').show();
+                    break;
+                case 'letterOrNum':
+                    result = Math.random()<.5?rdm_letter():rdm_num();
             }
             resultIndex = Math.floor(Math.random() * 10);
             let rdmStr = '';
@@ -181,7 +188,13 @@
             });
             $('#answer').text(result);
             $('#counter').text(counter);
-        }
+        };
+
+        $('[name=inlineRadioOptions]').change(function () {
+            type = $(this).val();
+            shuffle();
+        }).filter(':checked').change();
+
 
         function checkRight() {
             setTimeout(function () {
