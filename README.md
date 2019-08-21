@@ -3,15 +3,14 @@
 #### 介绍
   一款宝宝识字的web应用，阿洛是我家宝宝的小名^_^
 
+#### 演示地址
+
+http://e-art.top/projects/babyLiteracy/
+
 #### 软件架构
+
 软件架构说明
 
-
-#### 安装教程
-
-1. xxxx
-2. xxxx
-3. xxxx
 
 #### 使用说明
 
