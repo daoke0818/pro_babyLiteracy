@@ -114,8 +114,7 @@
                 <div></div>
                 <div></div>
             </div>
-            <img src="static/img/thumb1.jpg" id="good" class="position-absolute w-50"
-                 data-src="thumb1.jpg,thumb2,thumb3_face" alt="thumb">
+            <img src="" id="good" class="position-absolute w-50" alt="thumb">
         </section>
         <p>第
             <output id="counter" class="font-weight-bold"></output>
@@ -127,6 +126,7 @@
                     <button class="btn btn-primary" id="next">下一题</button>
                 </p>
         -->
+        <audio id="pippaPig" src="static/music/PeppaPig.m4a" controls style="display: none"></audio>
     </div>
 </div>
 <audio id="sound_correct" hidden src="static/sound/tada.wav"></audio>
@@ -157,7 +157,7 @@
             return result;
         };
         const shuffle = () => {
-            const thumbAttr = 'static/img/' + thumbs[Math.floor(Math.random() * thumbs.length)];
+            const thumbAttr = 'static/img/' + (counter===limitNum ? 'p_pass04_peiqi.jpg' : thumbs[Math.floor(Math.random() * thumbs.length)]);
             $good.hide().attr('src', thumbAttr);
             timer = null;
             $blocks.removeClass('correct error');
@@ -227,10 +227,11 @@
             $sound_next.get(0).pause();
             $sound_next.get(0).play();
             if (++counter > limitNum) {
-                alert('宝宝，你已经学了' + limitNum + '道题了，该休息一下眼睛了！');
-                $('#next').text('休息了');
-                close(); // 移动端不好用，PC端有时不好用
-                $('body').css('pointer-events', 'none');
+                alert('宝宝，你已经学了' + limitNum + '道题了，听首歌休息一下吧！');
+                $("#pippaPig").slideDown(600).get(0).play();
+                // $('#next').text('休息了');
+                // close(); // 移动端不好用，PC端有时不好用
+                // $('body').css('pointer-events', 'none');
                 return;
             }
             shuffle();
