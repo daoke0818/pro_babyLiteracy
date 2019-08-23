@@ -139,8 +139,16 @@
         const $good = $('#good');
         const $tip = $('#tip');
         const limitNum = 20;
-        const thumbs = ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg','p_pass04_peiqi.jpg','p_pass05_peiqiAnimation.gif','p_pass06_qiaozhi.jpg'];
-        const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
+        const thumbs = ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'];
+        // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
+        const passLetters = (function () {
+            let arr = [];
+            for (let i = 65; i < 91; i++) {
+                arr.push(String.fromCharCode(i));
+            }
+            return arr;
+        })();
+
         let result = '';
         let counter = 1;
         let resultIndex = 0;
@@ -157,7 +165,7 @@
             return result;
         };
         const shuffle = () => {
-            const thumbAttr = 'static/img/' + (counter===limitNum ? 'p_pass04_peiqi.jpg' : thumbs[Math.floor(Math.random() * thumbs.length)]);
+            const thumbAttr = 'static/img/' + (counter === limitNum ? 'p_pass04_peiqi.jpg' : thumbs[Math.floor(Math.random() * thumbs.length)]);
             $good.hide().attr('src', thumbAttr);
             timer = null;
             $blocks.removeClass('correct error');
@@ -168,10 +176,9 @@
                     break;
                 case 'letter': //大写字母的ASC2码是65~90
                     result = rdm_letter();
-                    $tip.html('目前已经学过的字母有：<br>' + passLetters.join(' ') + '<br>共' + passLetters.length + '个').show();
                     break;
                 case 'letterOrNum':
-                    result = Math.random()<.5?rdm_letter():rdm_num();
+                    result = Math.random() < .5 ? rdm_letter() : rdm_num();
             }
             resultIndex = Math.floor(Math.random() * 10);
             let rdmStr = '';
@@ -192,6 +199,9 @@
 
         $('[name=inlineRadioOptions]').change(function () {
             type = $(this).val();
+            if (type === 'letter' || 'letterOrNum') {
+                $tip.html('目前已经学过的字母有：<br>' + passLetters.join(' ') + '<br>共' + passLetters.length + '个').show();
+            }
             shuffle();
         }).filter(':checked').change();
 
