@@ -4,7 +4,7 @@ const index = {
     $sound_next: $('#sound_next'),
     $good: $('#good'),
     $tip : $('#tip'),
-    limitNum: 20,
+    limitNum: 15,
     thumbs: ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'],
     // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
     passLetters: (function () {
@@ -45,7 +45,7 @@ const index = {
         return result;
     },
     shuffle()  {
-        const thumbAttr = 'static/img/' + (this.counter === this.limitNum ? 'p_pass04_peiqi.jpg' : this.thumbs[Math.floor(Math.random() * this.thumbs.length)]);
+        const thumbAttr = 'static/img/' + (this.counter === this.limitNum ? 'p_pass07_peiqiAnimation.gif' : this.thumbs[Math.floor(Math.random() * this.thumbs.length)]);
         this.$good.hide().attr('src', thumbAttr);
         this.timer = null;
         this.$blocks.removeClass('correct error');
@@ -84,10 +84,8 @@ const index = {
             this.$sound_next.get(0).play();
             if (++this.counter > this.limitNum) {
                 alert('宝宝，你已经学了' + this.limitNum + '道题了，听首歌休息一下吧！');
+                that.$good.addClass('w-auto');
                 $("#pippaPig").slideDown(600).get(0).play();
-                // $('#next').text('休息了');
-                // close(); // 移动端不好用，PC端有时不好用
-                // $('body').css('pointer-events', 'none');
                 return;
             }
             this.shuffle();
