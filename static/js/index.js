@@ -5,6 +5,7 @@ const index = {
     $good: $('#good'),
     $tip : $('#tip'),
     limitNum: 15,
+    blockNum:6,
     thumbs: ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'],
     // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
     passLetters: (function () {
@@ -60,16 +61,17 @@ const index = {
             case 'letterOrNum':
                 this.result = Math.random() < .5 ? this.rdm_letter() : this.rdm_num();
         }
-        this.resultIndex = Math.floor(Math.random() * 10);
+        this.resultIndex = Math.floor(Math.random() * this.blockNum);
         let rdmStr = '';
         while (true) {
-            rdmStr = Math.random().toString(36).toUpperCase().substr(-8).split('');
+            rdmStr = Math.random().toString(36).toUpperCase().substr(1-this.blockNum).split('');
             if (!rdmStr.includes(this.result)) {
                 break;
             }
         }
+        //splice方法的第一个参数指对应的下标之前，如果数值很大超过了数组长度，则位置定在数组最后
+        // 所以this.resultIndex在0~n的位置对应n个rdmStr字符的n+1个空隙中
         rdmStr.splice(this.resultIndex, 0, this.result + '');
-        // console.log(result,resultIndex,rdmStr);
         this.$blocks.each(function (index, item, self) {
             $(item).text(rdmStr[index])
         });
