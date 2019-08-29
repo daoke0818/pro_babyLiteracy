@@ -3,11 +3,16 @@ const index = {
     $sound_correct: $('#sound_correct'),
     $sound_next: $('#sound_next'),
     $good: $('#good'),
-    $tip : $('#tip'),
+    $tip: $('#tip'),
     limitNum: 15,
-    blockNum:6,
-    thumbs: ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'],
+    blockNum: 6,
     // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
+    okPic: {
+        rdmPics: ['p_pass01_thumb.jpg','p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'],
+        empty:'1x1px.png',
+        level1: 'p_pass09_JSON.jpg',
+        level2: 'p_pass07_peiqiAnimation.gif'
+    },
     passLetters: (function () {
         let arr = [];
         for (let i = 65; i < 91; i++) {
@@ -34,10 +39,10 @@ const index = {
             that.shuffle();
         }).filter(':checked').change();
     },
-    rdm_num(){
-       return  Math.floor(Math.random() * 10) + '';
+    rdm_num() {
+        return Math.floor(Math.random() * 10) + '';
     },
-    rdm_letter(){
+    rdm_letter() {
         let result;
         while (true) {
             result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
@@ -45,8 +50,12 @@ const index = {
         }
         return result;
     },
-    shuffle()  {
-        const thumbAttr = 'static/img/' + (this.counter === this.limitNum ? 'p_pass07_peiqiAnimation.gif' : this.thumbs[Math.floor(Math.random() * this.thumbs.length)]);
+    /**
+     * 洗牌
+     */
+    shuffle() {
+        const rdmPic = (Math.random() < .67) ? this.okPic.empty : this.okPic.rdmPics[Math.floor(Math.random() * this.okPic.rdmPics.length)];
+        const thumbAttr = 'static/img/' + (this.counter === this.limitNum ? this.okPic.level2 : this.counter % 10 === 0 ? this.okPic.level1 : rdmPic);
         this.$good.hide().attr('src', thumbAttr);
         this.timer = null;
         this.$blocks.removeClass('correct error');
@@ -64,7 +73,7 @@ const index = {
         this.resultIndex = Math.floor(Math.random() * this.blockNum);
         let rdmStr = '';
         while (true) {
-            rdmStr = Math.random().toString(36).toUpperCase().substr(1-this.blockNum).split('');
+            rdmStr = Math.random().toString(36).toUpperCase().substr(1 - this.blockNum).split('');
             if (!rdmStr.includes(this.result)) {
                 break;
             }
@@ -78,9 +87,9 @@ const index = {
         $('#answer').text(this.result);
         $('#counter').text(this.counter);
     },
-    $blocksClick(){
+    $blocksClick() {
         const that = this;
-        const next = ()=>{
+        const next = () => {
             this.$blocks.css('pointer-events', 'initial');
             this.$sound_next.get(0).pause();
             this.$sound_next.get(0).play();
@@ -92,7 +101,7 @@ const index = {
             }
             this.shuffle();
         };
-        const checkRight = ()=>{
+        const checkRight = () => {
             setTimeout(function () {
                 that.$good.show(100)
             }, 400);
@@ -124,114 +133,3 @@ $(function () {
 });
 
 
-/*
-$(function () {
-    const $blocks = $('.box-wrap>div');
-    const $sound_correct = $('#sound_correct');
-    const $sound_next = $('#sound_next');
-    const $good = $('#good');
-    const $tip = $('#tip');
-    const limitNum = 20;
-    const thumbs = ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'];
-    // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
-    const passLetters = (function () {
-        let arr = [];
-        for (let i = 65; i < 91; i++) {
-            arr.push(String.fromCharCode(i));
-        }
-        return arr;
-    })();
-
-    let result = '';
-    let counter = 1;
-    let resultIndex = 0;
-    let timer = 0;
-    let type = '';
-
-    const rdm_num = () => Math.floor(Math.random() * 10) + '';
-    const rdm_letter = () => {
-        let result;
-        while (true) {
-            result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-            if (passLetters.includes(result)) { break;}
-        }
-        return result;
-    };
-    const shuffle = () => {
-        const thumbAttr = 'static/img/' + (counter === limitNum ? 'p_pass04_peiqi.jpg' : thumbs[Math.floor(Math.random() * thumbs.length)]);
-        $good.hide().attr('src', thumbAttr);
-        timer = null;
-        $blocks.removeClass('correct error');
-        switch (type) {
-            case "number":
-                result = rdm_num();
-                $tip.hide();
-                break;
-            case 'letter': //大写字母的ASC2码是65~90
-                result = rdm_letter();
-                break;
-            case 'letterOrNum':
-                result = Math.random() < .5 ? rdm_letter() : rdm_num();
-        }
-        resultIndex = Math.floor(Math.random() * 10);
-        let rdmStr = '';
-        while (true) {
-            rdmStr = Math.random().toString(36).toUpperCase().substr(-8).split('');
-            if (!rdmStr.includes(result)) {
-                break;
-            }
-        }
-        rdmStr.splice(resultIndex, 0, result + '');
-        // console.log(result,resultIndex,rdmStr);
-        $blocks.each(function (index, item, self) {
-            $(item).text(rdmStr[index])
-        });
-        $('#answer').text(result);
-        $('#counter').text(counter);
-    };
-
-
-    function checkRight() {
-        setTimeout(function () {
-            $good.show(100)
-        }, 400);
-
-        $blocks.eq(resultIndex).addClass('correct');
-        $sound_correct.get(0).pause();
-        $sound_correct.get(0).play();
-        timer = setTimeout(next, 1500);
-    }
-
-    $blocks.click(function () {
-        let text = $(this).text();
-        if (!timer && text === result) {
-            checkRight()
-        } else {
-            // $(this).addClass('error')
-        }
-
-    });
-    $('body').keyup(function (e) {
-        if (!timer && e.key === result) {
-            checkRight()
-        }
-    });
-
-    let next = () => {
-        $blocks.css('pointer-events', 'initial');
-        $sound_next.get(0).pause();
-        $sound_next.get(0).play();
-        if (++counter > limitNum) {
-            alert('宝宝，你已经学了' + limitNum + '道题了，听首歌休息一下吧！');
-            $("#pippaPig").slideDown(600).get(0).play();
-            // $('#next').text('休息了');
-            // close(); // 移动端不好用，PC端有时不好用
-            // $('body').css('pointer-events', 'none');
-            return;
-        }
-        shuffle();
-    }
-    /!*$('#next').click(function () {
-
-    })*!/
-})*/
