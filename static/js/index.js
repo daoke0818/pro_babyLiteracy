@@ -8,10 +8,11 @@ const index = {
     blockNum: 6,
     // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
     okPic: {
-        rdmPics: ['p_pass01_thumb.jpg','p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg','p_pass08_wolaile.gif'],
-        empty:'1x1px.png',
+        rdmPics: ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg', 'p_pass08_wolaile.gif'],
+        empty: '1x1px.png',
         level1: 'p_pass09_JSON.jpg',
-        level2: 'p_pass07_peiqiAnimation.gif'
+        level2: 'p_pass10_JSON.jpg',
+        levelLast: 'p_pass07_peiqiAnimation.gif'
     },
     passLetters: (function () {
         let arr = [];
@@ -54,8 +55,19 @@ const index = {
      * 洗牌
      */
     shuffle() {
-        const rdmPic = (Math.random() < .67) ? this.okPic.empty : this.okPic.rdmPics[Math.floor(Math.random() * this.okPic.rdmPics.length)];
-        const thumbAttr = 'static/img/' + (this.counter === this.limitNum ? this.okPic.level2 : this.counter % 10 === 0 ? this.okPic.level1 : rdmPic);
+        let picSrc = (Math.random() < .67) ? this.okPic.empty : this.okPic.rdmPics[Math.floor(Math.random() * this.okPic.rdmPics.length)];
+        switch (this.counter) {
+            case 5:
+                picSrc = this.okPic.level1;
+                break;
+            case 10:
+                picSrc = this.okPic.level2;
+                break;
+            case this.limitNum:
+                picSrc = this.okPic.levelLast;
+                break;
+        }
+        const thumbAttr = 'static/img/' + picSrc;
         this.$good.hide().attr('src', thumbAttr);
         this.timer = null;
         this.$blocks.removeClass('correct error');
@@ -109,7 +121,8 @@ const index = {
             this.$blocks.eq(this.resultIndex).addClass('correct');
             this.$sound_correct.get(0).pause();
             this.$sound_correct.get(0).play();
-            this.timer = setTimeout(next, 1500);
+
+            this.timer = setTimeout(next, that.$good.attr("src").includes('1x1px.png') ? 1000 : 2500);
         };
         that.$blocks.click(function () {
             const text = $(this).text();
