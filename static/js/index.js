@@ -63,7 +63,7 @@ const index = {
         let result;
         const index = Math.floor(Math.random() * 26);
         while (true) {
-            result = type==='lower'?this.upperLetters[index]:this.lowerLetters[index]
+            result = type === 'lower' ? this.upperLetters[index] : this.lowerLetters[index]
             if (this.passLetters.includes(result)) { break;}
         }
         return result;
@@ -101,7 +101,7 @@ const index = {
                 this.result = this.rdm_letter('lower');
                 break;
             case 'letterOrNum':
-                this.result = Math.random() < .66 ? this.rdm_letter(Math.random() < .5?'lower':null) : this.rdm_num();
+                this.result = Math.random() < .66 ? this.rdm_letter(Math.random() < .5 ? 'lower' : null) : this.rdm_num();
         }
         this.resultIndex = Math.floor(Math.random() * this.blockNum);
         let rdmStr = '';
