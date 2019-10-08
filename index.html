@@ -9,7 +9,6 @@
     <meta name="keywords" content="关中刀客在青岛,个人博客,前端技术博客">
     <meta name="description" content="一款宝宝识字的web应用">
     <link rel="stylesheet" href="static/assets/css/bootstrap-4.3.1.min.css">
-    <script src="static/assets/js/jquery-3.3.1.min.js"></script>
     <style>
         body {
             background-color: skyblue;
@@ -31,18 +30,25 @@
             color: #fff;
         }
 
+        .box-wrap{
+            box-shadow: 0.25rem 0.25rem 0.25rem rgba(0,0,0,.33);
+
+        }
         .box-wrap > div {
-            width: 33%;
+            position: relative;
+            width: calc(100%/3);
             height: 6rem;
-            line-height: 6rem;
+            line-height: 5.5rem;
             font-size: 4rem;
             font-weight: bold;
             border: .125rem solid gray;
             background: lightgray;
+            box-shadow: -0.25rem -0.25rem 0.25rem rgba(0,0,0,.88) inset;
             cursor: pointer;
         }
 
         .box-wrap > div.correct {
+            box-shadow: 0.25rem 0.25rem 0.25rem rgba(0,0,0,.9) inset;
             color: #fff;
             background: limegreen;
         }
@@ -59,7 +65,7 @@
         }
 
         #answer {
-            color: rgba(0, 0, 0, .1);
+            color: rgba(0, 0, 0, .15);
         }
 
         #next {
@@ -87,9 +93,14 @@
                     <label class="form-check-label" for="inlineRadio2">大写字母</label>
                 </div>
                 <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5"
+                           value="lowerCaseLetter">
+                    <label class="form-check-label" for="inlineRadio5">小写字母</label>
+                </div>
+                <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4"
                            value="letterOrNum" checked>
-                    <label class="form-check-label" for="inlineRadio4">大写字母或数字</label>
+                    <label class="form-check-label" for="inlineRadio4">字母或数字</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
@@ -104,9 +115,6 @@
         <section class="text-center mb-2 position-relative">
             <p class="mb-2">请点击答案方格：</p>
             <div class="box-wrap d-flex flex-wrap">
-                <div></div>
-                <div></div>
-                <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
@@ -131,132 +139,11 @@
 </div>
 <audio id="sound_correct" hidden src="static/sound/tada.wav"></audio>
 <audio id="sound_next" hidden src="static/sound/next.wav"></audio>
-<script>
-    $(function () {
-        const $blocks = $('.box-wrap>div');
-        const $sound_correct = $('#sound_correct');
-        const $sound_next = $('#sound_next');
-        const $good = $('#good');
-        const $tip = $('#tip');
-        const limitNum = 20;
-        const thumbs = ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg'];
-        // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
-        const passLetters = (function () {
-            let arr = [];
-            for (let i = 65; i < 91; i++) {
-                arr.push(String.fromCharCode(i));
-            }
-            return arr;
-        })();
-
-        let result = '';
-        let counter = 1;
-        let resultIndex = 0;
-        let timer = 0;
-        let type = 'number';
-
-        const rdm_num = () => Math.floor(Math.random() * 10) + '';
-        const rdm_letter = () => {
-            let result;
-            while (true) {
-                result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-                if (passLetters.includes(result)) { break;}
-            }
-            return result;
-        };
-        const shuffle = () => {
-            const thumbAttr = 'static/img/' + (counter === limitNum ? 'p_pass04_peiqi.jpg' : thumbs[Math.floor(Math.random() * thumbs.length)]);
-            $good.hide().attr('src', thumbAttr);
-            timer = null;
-            $blocks.removeClass('correct error');
-            switch (type) {
-                case "number":
-                    result = rdm_num();
-                    $tip.hide();
-                    break;
-                case 'letter': //大写字母的ASC2码是65~90
-                    result = rdm_letter();
-                    break;
-                case 'letterOrNum':
-                    result = Math.random() < .5 ? rdm_letter() : rdm_num();
-            }
-            resultIndex = Math.floor(Math.random() * 10);
-            let rdmStr = '';
-            while (true) {
-                rdmStr = Math.random().toString(36).toUpperCase().substr(-8).split('');
-                if (!rdmStr.includes(result)) {
-                    break;
-                }
-            }
-            rdmStr.splice(resultIndex, 0, result + '');
-            // console.log(result,resultIndex,rdmStr);
-            $blocks.each(function (index, item, self) {
-                $(item).text(rdmStr[index])
-            });
-            $('#answer').text(result);
-            $('#counter').text(counter);
-        };
-
-        $('[name=inlineRadioOptions]').change(function () {
-            type = $(this).val();
-            if (type === 'letter' || 'letterOrNum') {
-                $tip.html('目前已经学过的字母有：<br>' + passLetters.join(' ') + '<br>共' + passLetters.length + '个').show();
-            }
-            shuffle();
-        }).filter(':checked').change();
-
-
-        function checkRight() {
-            setTimeout(function () {
-                $good.show(100)
-            }, 400);
-
-            $blocks.eq(resultIndex).addClass('correct');
-            $sound_correct.get(0).pause();
-            $sound_correct.get(0).play();
-            timer = setTimeout(next, 1500);
-        }
-
-        $blocks.click(function () {
-            let text = $(this).text();
-            if (!timer && text === result) {
-                checkRight()
-            } else {
-                // $(this).addClass('error')
-            }
-
-        });
-        $('body').keyup(function (e) {
-            if (!timer && e.key === result) {
-                checkRight()
-            }
-        });
-
-        let next = () => {
-            $blocks.css('pointer-events', 'initial');
-            $sound_next.get(0).pause();
-            $sound_next.get(0).play();
-            if (++counter > limitNum) {
-                alert('宝宝，你已经学了' + limitNum + '道题了，听首歌休息一下吧！');
-                $("#pippaPig").slideDown(600).get(0).play();
-                // $('#next').text('休息了');
-                // close(); // 移动端不好用，PC端有时不好用
-                // $('body').css('pointer-events', 'none');
-                return;
-            }
-            shuffle();
-        }
-        /*$('#next').click(function () {
-
-        })*/
-    })
-</script>
+<script src="static/assets/js/jquery-3.3.1.min.js"></script>
+<script src="static/js/index.js"></script>
 </body>
 </html>
 
 <!--/usr/local/apache-tomcat-9.0.16/webapps/ROOT/projects/babyLiteracy-->
-
-
-
 
 
