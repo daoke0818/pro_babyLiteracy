@@ -14,10 +14,12 @@ const index = {
         level2: 'p_pass10_JSON.jpg',
         levelLast: 'p_pass07_peiqiAnimation.gif'
     },
+    lowerLetters: '',
+    upperLetters: '',
     passLetters: (function () {
-        let arr = [];
+        let arr = '';
         for (let i = 65; i < 91; i++) {
-            arr.push(String.fromCharCode(i));
+            arr += String.fromCharCode(i);
         }
         return arr;
     })(),
@@ -27,26 +29,41 @@ const index = {
     timer: 0,
     type: '',
     init() {
+        this.lowerLetters = this.generateLetters('lower');
+        this.upperLetters = this.generateLetters();
+        this.passLetters = this.upperLetters + this.lowerLetters
         this.radioCheck();
         this.$blocksClick();
+
+    },
+    generateLetters(type) {
+        let start = type === 'lower' ? 65 : 97;
+        let arr = '';
+        for (let i = start; i < start + 26; i++) {
+            arr += String.fromCharCode(i);
+        }
+        return arr;
     },
     radioCheck() {
         const that = this;
         $('[name=inlineRadioOptions]').change(function () {
             that.type = $(this).val();
-            if (this.type === 'letter' || 'letterOrNum') {
-                that.$tip.html('目前已经学过的字母有：<br>' + that.passLetters.join(' ') + '<br>共' + that.passLetters.length + '个').show();
-            }
+            /*
+                        if (this.type === 'letter' || 'letterOrNum') {
+                            that.$tip.html('目前已经学过的字母有：<br>' + that.passLetters.join(' ') + '<br>共' + that.passLetters.length + '个').show();
+                        }
+            */
             that.shuffle();
         }).filter(':checked').change();
     },
     rdm_num() {
         return Math.floor(Math.random() * 10) + '';
     },
-    rdm_letter() {
+    rdm_letter(type) {
         let result;
+        const index = Math.floor(Math.random() * 26);
         while (true) {
-            result = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+            result = type==='lower'?this.upperLetters[index]:this.lowerLetters[index]
             if (this.passLetters.includes(result)) { break;}
         }
         return result;
@@ -55,6 +72,7 @@ const index = {
      * 洗牌
      */
     shuffle() {
+        console.log(this.upperLetters, this.lowerLetters)
         let picSrc = (Math.random() < .67) ? this.okPic.empty : this.okPic.rdmPics[Math.floor(Math.random() * this.okPic.rdmPics.length)];
         switch (this.counter) {
             case 5:
@@ -79,8 +97,11 @@ const index = {
             case 'letter': //大写字母的ASC2码是65~90
                 this.result = this.rdm_letter();
                 break;
+            case 'lowerCaseLetter':
+                this.result = this.rdm_letter('lower');
+                break;
             case 'letterOrNum':
-                this.result = Math.random() < .5 ? this.rdm_letter() : this.rdm_num();
+                this.result = Math.random() < .66 ? this.rdm_letter(Math.random() < .5?'lower':null) : this.rdm_num();
         }
         this.resultIndex = Math.floor(Math.random() * this.blockNum);
         let rdmStr = '';
