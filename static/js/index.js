@@ -16,30 +16,36 @@ const index = {
     },
     lowerLetters: '',
     upperLetters: '',
-    passLetters: (function () {
-        let arr = '';
-        for (let i = 65; i < 91; i++) {
-            arr += String.fromCharCode(i);
-        }
-        return arr;
-    })(),
+    operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：',
+    passOperateChar: '+_×÷><=，。：',
+    passLetters: '',
     result: '',
     counter: 1,
     resultIndex: 0,
     timer: 0,
     type: '',
     init() {
-        this.lowerLetters = this.generateLetters('lower');
-        this.upperLetters = this.generateLetters();
-        this.passLetters = this.upperLetters + this.lowerLetters
+        Array.prototype.disruptOrder = function () {
+            const arr = this.slice();
+            const result = [];
+            while (true) {
+                if (!arr.length) break;
+                const index = Math.random() * arr.length | 0;
+                result.push(arr.splice(index, 1)[0]);
+            }
+            return result
+        };
+        this.lowerLetters = this.generateLetters();
+        this.upperLetters = this.generateLetters().toLocaleUpperCase();
+        this.passLetters = this.upperLetters + this.lowerLetters;
         this.radioCheck();
         this.$blocksClick();
 
     },
-    generateLetters(type) {
-        let start = type === 'lower' ? 65 : 97;
+    generateLetters() {
+        // let start = type === 'lower' ? 65 : 97;
         let arr = '';
-        for (let i = start; i < start + 26; i++) {
+        for (let i = 65; i < 65 + 26; i++) {
             arr += String.fromCharCode(i);
         }
         return arr;
@@ -68,11 +74,13 @@ const index = {
         }
         return result;
     },
+    rdm_operateChar() {
+        return this.passOperateChar[Math.random() * this.passOperateChar.length | 0]
+    },
     /**
      * 洗牌
      */
     shuffle() {
-        console.log(this.upperLetters, this.lowerLetters)
         let picSrc = (Math.random() < .67) ? this.okPic.empty : this.okPic.rdmPics[Math.floor(Math.random() * this.okPic.rdmPics.length)];
         switch (this.counter) {
             case 5:
@@ -100,13 +108,22 @@ const index = {
             case 'lowerCaseLetter':
                 this.result = this.rdm_letter('lower');
                 break;
+            case 'operateChar':
+                this.result = this.rdm_operateChar();
+                break;
             case 'letterOrNum':
                 this.result = Math.random() < .66 ? this.rdm_letter(Math.random() < .5 ? 'lower' : null) : this.rdm_num();
         }
         this.resultIndex = Math.floor(Math.random() * this.blockNum);
-        let rdmStr = '';
+        let rdmStr = [];
+        // 生成随机字符串以填充方格
         while (true) {
-            rdmStr = Math.random().toString(36).toUpperCase().substr(1 - this.blockNum).split('');
+            if (this.type === 'operateChar') {
+                rdmStr = this.operateChar.split('').disruptOrder().splice(1 - this.blockNum);
+            }else{
+                rdmStr = Math.random().toString(36).toUpperCase().substr(1 - this.blockNum).split('');
+            }
+
             if (!rdmStr.includes(this.result)) {
                 break;
             }
