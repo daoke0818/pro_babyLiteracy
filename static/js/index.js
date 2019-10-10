@@ -14,36 +14,44 @@ const index = {
         level2: 'p_pass10_JSON.jpg',
         levelLast: 'p_pass07_peiqiAnimation.gif'
     },
+    numbers: '0123456789',
     lowerLetters: '',
     upperLetters: '',
-    operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：？',
-    passOperateChar: '+_×÷><=，。：？',
-    passLetters: '',
+    operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：',
+    passOperateChar: '+-×÷><=_，。：',
+    // passLetters: '',
     result: '',
     counter: 1,
     resultIndex: 0,
     timer: 0,
     type: '',
     init() {
-        Array.prototype.disruptOrder = function () {
-            const arr = this.slice();
+        const disruptOrder = function () {
+            const isArray = Array.isArray(this);
+            const arr = (isArray ? this : this.split('')).slice();
             const result = [];
             while (true) {
                 if (!arr.length) break;
                 const index = Math.random() * arr.length | 0;
                 result.push(arr.splice(index, 1)[0]);
             }
-            return result
+            return isArray ? result : result.join('')
         };
-        this.lowerLetters = this.generateLetters();
-        this.upperLetters = this.generateLetters().toLocaleUpperCase();
-        this.passLetters = this.upperLetters + this.lowerLetters;
+        const rdm = function () {
+            return this[Math.random() * this.length | 0]
+        };
+        Array.prototype.disruptOrder = disruptOrder;
+        Array.prototype.rdm = rdm;
+        String.prototype.disruptOrder = disruptOrder;
+        String.prototype.rdm = rdm;
+        this.lowerLetters = this.generateLetters().toLocaleLowerCase();
+        this.upperLetters = this.generateLetters();
+        // this.passLetters = this.upperLetters + this.lowerLetters;
         this.radioCheck();
         this.$blocksClick();
 
     },
-    generateLetters() {
-        // let start = type === 'lower' ? 65 : 97;
+    generateLetters() { // 大写字母的ASC2码是65~90
         let arr = '';
         for (let i = 65; i < 65 + 26; i++) {
             arr += String.fromCharCode(i);
@@ -54,28 +62,13 @@ const index = {
         const that = this;
         $('[name=inlineRadioOptions]').change(function () {
             that.type = $(this).val();
-                if (that.type === 'operateChar' ) {
-                    that.$tip.html('目前已经学过的符号有：<br>' + that.passOperateChar.split('').join(' ') + '<br>共' + that.passOperateChar.length + '个').show();
-                }else{
-                    that.$tip.hide()
-                }
+            if (that.type === 'operateChar') {
+                that.$tip.html('目前已经学过的符号有：<br>' + that.passOperateChar.split('').join(' ') + '<br>共' + that.passOperateChar.length + '个').show();
+            } else {
+                that.$tip.hide()
+            }
             that.shuffle();
         }).filter(':checked').change();
-    },
-    rdm_num() {
-        return Math.floor(Math.random() * 10) + '';
-    },
-    rdm_letter(type) {
-        let result;
-        const index = Math.floor(Math.random() * 26);
-        while (true) {
-            result = type === 'lower' ? this.upperLetters[index] : this.lowerLetters[index]
-            if (this.passLetters.includes(result)) { break;}
-        }
-        return result;
-    },
-    rdm_operateChar() {
-        return this.passOperateChar[Math.random() * this.passOperateChar.length | 0]
     },
     /**
      * 洗牌
@@ -99,20 +92,19 @@ const index = {
         this.$blocks.removeClass('correct error');
         switch (this.type) {
             case "number":
-                this.result = this.rdm_num();
-                this.$tip.hide();
+                this.result = this.numbers.rdm();
                 break;
-            case 'letter': //大写字母的ASC2码是65~90
-                this.result = this.rdm_letter();
+            case 'letter':
+                this.result = this.upperLetters.rdm();
                 break;
             case 'lowerCaseLetter':
-                this.result = this.rdm_letter('lower');
+                this.result = this.lowerLetters.rdm();
                 break;
             case 'operateChar':
-                this.result = this.rdm_operateChar();
+                this.result = this.passOperateChar.rdm();
                 break;
             case 'letterOrNum':
-                this.result = Math.random() < .66 ? this.rdm_letter(Math.random() < .5 ? 'lower' : null) : this.rdm_num();
+                this.result = (this.numbers + this.upperLetters + this.lowerLetters).rdm();
         }
         this.resultIndex = Math.floor(Math.random() * this.blockNum);
         let rdmStr = [];
@@ -120,7 +112,9 @@ const index = {
         while (true) {
             if (this.type === 'operateChar') {
                 rdmStr = this.operateChar.split('').disruptOrder().splice(1 - this.blockNum);
-            }else{
+            } else if (this.type === 'lowerCaseLetter') {
+                rdmStr = Math.random().toString(36).substr(1 - this.blockNum).split('');
+            } else if (['letter','number','letterOrNum'].includes(this.type)) {
                 rdmStr = Math.random().toString(36).toUpperCase().substr(1 - this.blockNum).split('');
             }
             // 填充的字符不包含当前的答案则退出循环，即不重复
