@@ -123,7 +123,8 @@ const index = {
             }else{
                 rdmStr = Math.random().toString(36).toUpperCase().substr(1 - this.blockNum).split('');
             }
-
+            // 填充的字符不包含当前的答案则退出循环，即不重复
+            console.log(rdmStr)
             if (!rdmStr.includes(this.result)) {
                 break;
             }
