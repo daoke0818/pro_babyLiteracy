@@ -16,8 +16,8 @@ const index = {
     },
     lowerLetters: '',
     upperLetters: '',
-    operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：',
-    passOperateChar: '+_×÷><=，。：',
+    operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：？',
+    passOperateChar: '+_×÷><=，。：？',
     passLetters: '',
     result: '',
     counter: 1,
@@ -54,11 +54,11 @@ const index = {
         const that = this;
         $('[name=inlineRadioOptions]').change(function () {
             that.type = $(this).val();
-            /*
-                        if (this.type === 'letter' || 'letterOrNum') {
-                            that.$tip.html('目前已经学过的字母有：<br>' + that.passLetters.join(' ') + '<br>共' + that.passLetters.length + '个').show();
-                        }
-            */
+                if (that.type === 'operateChar' ) {
+                    that.$tip.html('目前已经学过的符号有：<br>' + that.passOperateChar.split('').join(' ') + '<br>共' + that.passOperateChar.length + '个').show();
+                }else{
+                    that.$tip.hide()
+                }
             that.shuffle();
         }).filter(':checked').change();
     },
