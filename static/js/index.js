@@ -18,7 +18,7 @@ const index = {
     lowerLetters: '',
     upperLetters: '',
     operateChar: '!@#$%^&*()_+{}|:"<>?-=[];\',./`~×÷' + '，。：',
-    passOperateChar: '+-×÷><=_，。：',
+    passOperateChar: '+-×÷><=_，。：\/#*',
     // passLetters: '',
     result: '',
     counter: 1,
