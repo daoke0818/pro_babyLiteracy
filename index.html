@@ -38,7 +38,7 @@
             position: relative;
             width: calc(100%/3);
             height: 6rem;
-            line-height: 5.5rem;
+            line-height: 5rem;
             font-size: 4rem;
             font-weight: bold;
             border: .125rem solid gray;
@@ -46,7 +46,12 @@
             box-shadow: -0.25rem -0.25rem 0.25rem rgba(0,0,0,.88) inset;
             cursor: pointer;
         }
-
+        .box-wrap.w2h2 > div{
+            width: calc(100%/2);
+        }
+        .box-wrap.w2h2 > div:nth-of-type(4) ~ div{
+            display: none;
+        }
         .box-wrap > div.correct {
             box-shadow: 0.25rem 0.25rem 0.25rem rgba(0,0,0,.9) inset;
             color: #fff;
@@ -101,19 +106,27 @@
                     <label class="form-check-label" for="inlineRadio5">小写字母</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio6"
-                           value="operateChar">
-                    <label class="form-check-label" for="inlineRadio6">符号</label>
-                </div>
-                <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4"
                            value="letterOrNum">
                     <label class="form-check-label" for="inlineRadio4">字母或数字</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
-                           value="other" disabled>
-                    <label class="form-check-label" for="inlineRadio3">其他符号</label>
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio6"
+                           value="operateChar">
+                    <label class="form-check-label" for="inlineRadio6">符号</label>
+                </div>
+            </div>
+            <hr>
+            <div class="input-group justify-content-end">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="model" id="model1"
+                           value="w2h2" checked>
+                    <label class="form-check-label" for="model1">2x2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="model" id="model2"
+                           value="w3h2">
+                    <label class="form-check-label" for="model2">3x2</label>
                 </div>
                 <div class="ml-3">
                     <output id="answer"></output>
@@ -122,7 +135,7 @@
         </div>
         <section class="text-center mb-2 position-relative">
             <p class="mb-2">请点击答案方格：</p>
-            <div class="box-wrap d-flex flex-wrap">
+            <div class="box-wrap d-flex flex-wrap w2h2">
                 <div></div>
                 <div></div>
                 <div></div>

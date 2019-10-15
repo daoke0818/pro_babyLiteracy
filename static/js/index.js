@@ -5,7 +5,7 @@ const index = {
     $good: $('#good'),
     $tip: $('#tip'),
     limitNum: 15,
-    blockNum: 6,
+    blockNum: 4,
     // const passLetters = ['A', 'B', 'C', 'E', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'W', 'X', 'Y', 'Z'];
     okPic: {
         rdmPics: ['p_pass01_thumb.jpg', 'p_pass02_thumb.jpg', 'p_pass03_thumb_face.jpg', 'p_pass04_peiqi.jpg', 'p_pass05_peiqiAnimation.gif', 'p_pass06_qiaozhi.jpg', 'p_pass08_wolaile.gif'],
@@ -69,6 +69,16 @@ const index = {
             }
             that.shuffle();
         }).filter(':checked').change();
+        $('[name=model]').change(function () {
+            if($(this).val() === 'w2h2'){
+                $('.box-wrap').addClass('w2h2');
+                that.blockNum = 4;
+            }else{
+                $('.box-wrap').removeClass('w2h2');
+                that.blockNum = 6;
+            }
+            that.shuffle();
+        })
     },
     /**
      * 洗牌
